@@ -1,4 +1,4 @@
-import { Notice, Plugin, PluginSettingTab } from 'obsidian';
+import { Notice, Plugin } from 'obsidian';
 import {cleanInputStringMdFormat} from "./utils/textCleaner";
 import { calculateReadingSpeed } from './utils/readingSpeed';
 import { ChangeReadingSpeedModal } from './components/modals';
