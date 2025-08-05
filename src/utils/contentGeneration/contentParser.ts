@@ -14,10 +14,16 @@ function findAllHeadingsInOrder(fileContent: string): string[] {
 
     const lines = fileContent.split("\n");
     const headings: string[] = [];
+
+    let codeComment = false;
+
     for (let i = 0; i < lines.length; i++) {
         const match = lines[i].match(headingRegex);
-        if (match && lines[i].trim() !== "## Content:") {
+        if (match && lines[i].trim() !== "## Content:" && !codeComment) {
             headings.push(lines[i].trim());
+        }
+        if (lines[i].trim().startsWith("```")) {
+            codeComment = !codeComment;
         }
     }
 

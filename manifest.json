@@ -1,9 +1,9 @@
 {
 	"id": "utils-yar",
 	"name": "Handy Utils",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"minAppVersion": "0.15.0",
-	"description": "Handy utils is a plugin that contain several features that I use all the time\n\t- time to read\n\t- generation of contents",
+	"description": "Useful utilities for Obsidian",
 	"author": "Yaroslav",
 	"authorUrl": "https://github.com/Ktoettotakoy",
 	"fundingUrl": "https://savelife.in.ua/en/",
