@@ -15,13 +15,14 @@ function findAllHeadingsInOrder(fileContent: string): string[] {
     const lines = fileContent.split("\n");
     const headings: string[] = [];
 
+    // This variable is used to track if we are inside a code block
     let codeComment = false;
-
     for (let i = 0; i < lines.length; i++) {
         const match = lines[i].match(headingRegex);
         if (match && lines[i].trim() !== "## Content:" && !codeComment) {
             headings.push(lines[i].trim());
         }
+        // filter out code comments
         if (lines[i].trim().startsWith("```")) {
             codeComment = !codeComment;
         }
