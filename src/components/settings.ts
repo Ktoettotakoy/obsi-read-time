@@ -1,7 +1,20 @@
 import { PluginSettingTab, Setting, App } from 'obsidian';
 import MyPlugin from '../main';
 
-export class ReadSpeedSettingTab extends PluginSettingTab {
+export interface MyPluginSettings {
+    readSpeed: number
+    timeFormat: string
+    tocHeadingPattern: string
+}
+
+export const DEFAULT_SETTINGS: MyPluginSettings = {
+    readSpeed: 60, // default reading speed
+    timeFormat: "long",
+    tocHeadingPattern: "## Content:"
+}
+
+
+export class MyPluginSettingsTab extends PluginSettingTab {
     plugin: MyPlugin;
 
     constructor(app: App, plugin: MyPlugin) {
@@ -14,6 +27,7 @@ export class ReadSpeedSettingTab extends PluginSettingTab {
 
         containerEl.empty();
 
+        containerEl.createEl("h1", { text: "Reading speed settings" });
         new Setting(containerEl)
             .setName('Reading Speed (WPM)')
             .setDesc('Set your preferred reading speed in words per minute.')
@@ -42,6 +56,19 @@ export class ReadSpeedSettingTab extends PluginSettingTab {
                     this.plugin.settings.timeFormat = value;
                     // update ui
                     this.plugin.updateReadingTimeInStatusBar();
+                    await this.plugin.saveSettings();
+                }));
+
+
+        containerEl.createEl("h1", { text: "Table of Contents settings" });
+        new Setting(containerEl)
+            .setName('Pattern for Table of Content heading')
+            .setDesc('Set the pattern for the Table of Contents heading. Default is "## Content:"')
+            .addText(text => text
+                .setPlaceholder('Enter your pattern')
+                .setValue(this.plugin.settings.tocHeadingPattern)
+                .onChange(async (value) => {
+                    this.plugin.settings.tocHeadingPattern = value;
                     await this.plugin.saveSettings();
                 }));
     }

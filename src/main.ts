@@ -1,25 +1,17 @@
-import { Notice, Plugin } from 'obsidian';
+import { Notice, Plugin, PluginSettingTab } from 'obsidian';
 import {cleanInputStringMdFormat} from "./utils/textCleaner";
 import { calculateReadingSpeed } from './utils/readingSpeed';
 import { ChangeReadingSpeedModal } from './components/modals';
-import { ReadSpeedSettingTab } from './components/settings';
+import { MyPluginSettingsTab, MyPluginSettings, DEFAULT_SETTINGS } from './components/settings';
 import { formatReadingTime, setNullReadingTime } from './utils/formatReadingTimeStatusBar';
 import { findContentsLine, findAllHeadingsInOrder, findThreeDashesAfterContents } from './utils/contentGeneration/contentParser';
 import { generateTOCLines, replaceTOCBetweenContentAndRule } from './utils/contentGeneration/tableOfContentWriter';
 
 
-interface TimeToReadSettings {
-	readSpeed: number
-	timeFormat: string
-}
 
-const DEFAULT_SETTINGS: TimeToReadSettings = {
-	readSpeed: 60, // default reading speed
-	timeFormat: "long"
-}
 
 export default class MyPlugin extends Plugin {
-	settings: TimeToReadSettings;
+	settings: MyPluginSettings;
 	statusBarReadTimeEl: HTMLElement;
 
 	async onload() {
@@ -76,7 +68,7 @@ export default class MyPlugin extends Plugin {
 				let fileContent = await this.app.vault.read(activeFile);
 
 				// find "## Content"
-				const startLine = findContentsLine(fileContent);
+				const startLine = findContentsLine(fileContent, this.settings.tocHeadingPattern);
 				if (startLine == -1){
 					new Notice(`## Content is not found in this file`);
 					return;
@@ -89,7 +81,7 @@ export default class MyPlugin extends Plugin {
 					return;
 				}
 
-				const orderedHeadings = findAllHeadingsInOrder(fileContent);
+				const orderedHeadings = findAllHeadingsInOrder(fileContent, this.settings.tocHeadingPattern);
 				const tocLines = generateTOCLines(orderedHeadings);
 				const newContent = replaceTOCBetweenContentAndRule(fileContent, tocLines, startLine, endLine);
 				await this.app.vault.modify(activeFile, newContent);
@@ -102,7 +94,7 @@ export default class MyPlugin extends Plugin {
 
 
 		// Adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new ReadSpeedSettingTab(this.app, this));
+		this.addSettingTab(new MyPluginSettingsTab(this.app, this));
 
 	}
 
